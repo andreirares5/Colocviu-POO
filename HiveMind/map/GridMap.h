@@ -1,5 +1,5 @@
 #pragma once
-#include<vector>
+#include <vector>
 #include "Tile.h"
 
 struct Position
@@ -16,8 +16,8 @@ struct Position
 class GridMap
 {
     private:
-        int rows;
-        int columns;
+        int rows; //M
+        int columns; //N
         std :: vector<std :: vector<TileType>> grid;
 
         Position base;
@@ -27,6 +27,16 @@ class GridMap
     public:
         GridMap(int rows, int columns); 
 
-        void setTtyle(int x, int y, TileType type);
+        void setTile(int x, int y, TileType type);
         TileType getTileType(int x, int y) const;
+
+        int getRows() const;
+        int getColumns() const;
+
+        Position getBasePosition() const;
+        const std :: vector<Position>& getStationsPositions() const;
+        const std :: vector<Position>& getClientsPositions() const;
+
+        bool isInside(int x, int y) const;
+        bool isWalkable(int x, int y, bool ignoreWalls) const;
 };
