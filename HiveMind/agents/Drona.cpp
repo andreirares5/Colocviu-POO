@@ -1,24 +1,74 @@
 #include "Drona.h"
+#include <algorithm>
 
-Drona :: Drona(Position startPosition) : Agent(startPosition) 
+Drona::Drona(Position startPosition)
+    : Agent(startPosition, BATTERY, CONSUMPTION, SPEED, COST, CAPACITY)
+{}
+
+void Drona::update(const GridMap& map)
 {
-    maxBatteryLevel = 100;
-    batteryLevel = maxBatteryLevel;
+    if (state == AgentState :: DEAD)
+        return;
 
-    speed = 3;
-    consume = 10;
-    costPerTick = 15;
-    capacity = 1;
-}
+    TileType tile = map.getTileType(position.x, position.y);
 
-void Drona :: update(const GridMap& map)
-{
-    if(batteryLevel <= 0)
+    if ((tile == TileType::Station || tile == TileType::Base) &&
+        batteryLevel < maxBatteryLevel)
     {
-        state = AgentState :: DEAD;
+        recharge();
+        state = AgentState::CHARGING;
         return;
     }
 
-    batteryLevel = batteryLevel -consume;
+    if (!hasPackage)
+    {
+        state = AgentState :: IDLE;
+        return;
+    }
+
+    if (position == destination)
+    {
+        completeDelivery();
+        return;
+    }
+
+    if (path.empty())
+    {
+        hasPackage = false;
+        state = AgentState :: IDLE;
+        return;
+    }
+
     state = AgentState :: MOVING;
+
+    int steps = 0;
+
+
+    while (steps < speed && !path.empty() && state != AgentState :: DEAD)
+    {
+        Position nextPos = path.front();
+        path.erase(path.begin());
+
+        if (!map.isInside(nextPos.x, nextPos.y))
+        {
+            hasPackage = false;
+            state = AgentState :: IDLE;
+            return;
+        }
+
+    position = nextPos;
+    consumeBattery();
+
+    
+    if (position == destination)
+    {
+        completeDelivery();
+        return;
+    }
+
+    steps++;
 }
+    if (state == AgentState :: DEAD)
+        return;
+}
+

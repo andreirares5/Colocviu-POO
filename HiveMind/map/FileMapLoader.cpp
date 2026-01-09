@@ -7,63 +7,63 @@ FileMapLoader :: FileMapLoader(const std :: string& filename) : filename(filenam
 
 std :: unique_ptr<GridMap> FileMapLoader :: generate()
 {
-    std :: ifstream file(filename);
+    std :: ifstream file(filename); //incerc sa deschid fisierul
     if(!file.is_open())
-        throw std :: runtime_error("Could not open map file");
+        throw std :: runtime_error("Eroare la deschiderea fisierului cu harta");
 
-    std :: vector<std :: string> lines;
+    std :: vector<std :: string> lines; //vectorul care retine liniile
     std :: string line;
 
-    while(std :: getline(file, line))
+    while(std :: getline(file, line)) //citesc fisierul linie cu linie
     {
         if(!line.empty())
             lines.push_back(line);
     }
 
-    if(lines.empty())
-        throw std :: runtime_error("Map file is empty");
+    if(lines.empty()) //daca vectorul este gol, atunci nu am date valide 
+        throw std :: runtime_error("Fisierul cu harta este gol");
 
-    int rows = static_cast<int>(lines.size());
-    int columns = static_cast<int>(lines[0].size());
+    int rows = static_cast<int>(lines.size()); ///nr de linii citite va fi numarul de randuri
+    int columns = static_cast<int>(lines[0].size()); // iar lungimea primei linii citite devine nr de coloane
 
-    auto map = std :: make_unique<GridMap>(rows, columns);
+    auto map = std :: make_unique<GridMap>(rows, columns); // creez in memorie
 
-    for(int i = 0; i < rows; i++)
+    for(int i = 0; i < rows; i++) //incep sa parcurg harta
     {
-        if(static_cast<int>(lines[i].size()) != columns)
-            throw std :: runtime_error("Map file has rows of varying lengths.");
+        if(static_cast<int>(lines[i].size()) != columns) //toate liniile trebuie sa aiba aceeasi lungime(=> la final obtin un dreptunghi, chiar patrat daca M = N)
+            throw std :: runtime_error("Harta are linii de lungimi diferite");
 
         for(int j = 0; j < columns; j++)
         {
-            char character = lines[i][j];
+            char character = lines[i][j]; //parcurg caracterul curent sa vad ce tip de celula este
         
             switch(character)
             {
                 case '.':
-                    map -> setTile(i, j, TileType :: Road);
+                    map -> setTile(i, j, TileType :: Road); //drum
                     break;
 
                 case '#':
-                    map -> setTile(i, j, TileType :: Wall);
+                    map -> setTile(i, j, TileType :: Wall); //zid
                     break;
 
                 case 'B':
-                    map -> setTile(i, j, TileType :: Base);
+                    map -> setTile(i, j, TileType :: Base); //baza
                     break;
 
                 case 'S':
-                    map -> setTile(i, j, TileType :: Station);
+                    map -> setTile(i, j, TileType :: Station); //statie
                     break;
 
                 case 'D':
-                    map -> setTile(i, j, TileType :: Client);
+                    map -> setTile(i, j, TileType :: Client); //client
                     break;
 
                 default:
-                    throw std :: runtime_error("Invalid character");
+                    throw std :: runtime_error("Caracter necunoscut"); //luam si
             }
         }
     }
 
-    return map;
+    return map; //returnez harta complet construita
 }

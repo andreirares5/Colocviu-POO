@@ -4,5 +4,5 @@
 class MapValidator
 {
     public:
-        static bool validate(const GridMap& map);
+        static bool validate(const GridMap& map); //metoda care va verifica validitatea hartii
 };

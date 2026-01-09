@@ -3,8 +3,9 @@
 
 class BFSRoute : public RoutePlanner 
 {
-    BFSRoute() = default;
-    ~BFSRoute() override = default;
+    public:
+        BFSRoute() = default;
+        ~BFSRoute() override = default;
     
-    Path planPath(const GridMap& map, const Position& start, const Position& goal, bool ignoreWalls) const override;
+        Path planPath(const GridMap& map, const Position& start, const Position& goal, bool ignoreWalls) const override;
 };

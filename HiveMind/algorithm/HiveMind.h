@@ -1,19 +1,16 @@
 #pragma once
 #include <vector>
-#include <memory>
-
-#include "../agents/Agent.h"
 #include "../map/GridMap.h"
-#include "../navigation/RoutePlanner.h"
+#include "../agents/Agent.h"
+#include "Package.h"
 
 class HiveMind
 {
-    private:
-        Agent* freeAgent(std :: vector<std :: unique_ptr<Agent>> &agents);
-        bool hasEnoughEnergy(const Agent &agent, const Path& path) const;
-        
-    public:
-        HiveMind() = default;
+public:
+    HiveMind() = default;
 
-        void decide(std :: vector<std :: unique_ptr<Agent>> &agents, const GridMap &map,const RoutePlanner &planner);
+    void dispatchPackages(std::vector<Agent*>& agents,
+                          std::vector<Package>& packages,
+                          const GridMap& map,
+                          int currentTick);
 };

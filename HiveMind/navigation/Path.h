@@ -5,14 +5,14 @@
 
 struct Path
 {
-    std :: vector<Position> nodes;
+    std :: vector<Position> nodes; //pozitiile care formeaza traseul
 
     bool isEmpty() const
     {
         return nodes.empty();
     }
 
-    size_t length() const
+    size_t length() const //returnez lungimea traseului
     {
         return nodes.size();
     }

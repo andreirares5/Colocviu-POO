@@ -1,0 +1,14 @@
+Simulation Report
+=================
+
+Ticks run: 511
+Packages spawned: 50
+Delivered: 46
+Late: 13
+Undelivered: 4
+Dead agents: 4
+
+Total reward: 21497
+Total operating cost: 1974
+Total penalties: 3450
+Final profit: 16073

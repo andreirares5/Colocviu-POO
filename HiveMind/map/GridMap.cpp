@@ -1,96 +1,111 @@
 #include "GridMap.h"
 #include <stdexcept>
+#include <algorithm>
+#include <fstream>
 
-GridMap :: GridMap(int rows, int cols) : rows(rows), columns(cols) 
+GridMap :: GridMap(int rows, int cols) : rows(rows), columns(cols)
 {
-    if(rows <= 0 || cols <= 0)
-        throw std :: invalid_argument("Invalid map decisions");
+    if (rows <= 0 || cols <= 0) //verific dimensiunile hartii
+        throw std :: invalid_argument("Dimensiuni invalide");
 
-    grid.resize(rows);
-    for(int i = 0; i < rows; i++)
-    {
+    grid.resize(rows); //initializez harta doar cu celule de tip road
+    for (int i = 0; i < rows; i++)
         grid[i].resize(cols, TileType :: Road);
-    }
 }
 
-void GridMap :: setTile(int x, int y, TileType type)
+void GridMap::setTile(int x, int y, TileType type)
 {
-    if(!isInside(x, y))
-        throw std :: out_of_range("Position outside map");
+    if (!isInside(x, y)) //verific daca pozitia se afla pe harta
+        throw std :: out_of_range("Pozitia nu se afla pe harta");
 
     grid[x][y] = type;
+    Position position{x, y};
 
-    Position position {x, y};
-
-    if(type == TileType :: Base)
-    {
+    if (type == TileType :: Base) //daca celula este baza, atunci salvez pozitia ei(este si unica)
         base = position;
-    }
-
-    else if (type == TileType :: Station)
+    else if (type == TileType :: Station) //daca este statie, o adaug in lista statiilor  daca nu exista deja
     {
-        stations.push_back(position);
+        if (std :: find(stations.begin(), stations.end(), position) == stations.end())
+            stations.push_back(position);
     }
-
-    else if(type == TileType :: Client)
+    else if (type == TileType :: Client) // daca este client, il adaug in lista clientilor daca nu exista deja
     {
-        clients.push_back(position);
+        if (std :: find(clients.begin(), clients.end(), position) == clients.end())
+            clients.push_back(position);
     }
 }
 
 TileType GridMap :: getTileType(int x, int y) const
 {
-    if(!isInside(x, y))
-        throw std :: out_of_range("Invalid position");
+    if (!isInside(x, y))
+        throw std :: out_of_range("Pozitia nu se afla pe harta");
 
     return grid[x][y];
 }
 
-int GridMap :: getRows() const
-{
-    return rows;
+int GridMap :: getRows() const 
+{ 
+    return rows; 
 }
 
-int GridMap :: getColumns() const
-{
-    return columns;
+int GridMap :: getColumns() const 
+{ 
+    return columns; 
 }
 
-Position GridMap :: getBasePosition() const
-{
-    return base;
+Position GridMap :: getBasePosition() const 
+{ 
+    return base; 
 }
 
-const std :: vector<Position>& GridMap :: getStationsPositions() const
+const std::vector<Position>& GridMap :: getStationsPositions() const
 {
     return stations;
 }
 
-const std :: vector<Position>& GridMap :: getClientsPositions() const
+const std::vector<Position>& GridMap :: getClientsPositions() const
 {
     return clients;
 }
 
 bool GridMap :: isInside(int x, int y) const
 {
-    if( x < 0 || y < 0)
+    return x >= 0 && y >= 0 && x < rows && y < columns;
+}
+
+bool GridMap :: isWalkable(int x, int y, bool ignoreWalls) const //verifica daca pe pozitia {x,y} se poate merge
+{
+    if (!isInside(x, y)) 
         return false;
 
-    if( x >= rows || y >= columns)
+    if (grid[x][y] == TileType :: Wall && !ignoreWalls) 
         return false;
 
     return true;
 }
 
-bool GridMap :: isWalkable(int x, int y, bool ignoreWalls) const
+static char tileTypeToChar(TileType type) //auxiliar am creat aceasta functie care imi converteste tipul celulei in caracter pentru a o salva ulterior intr-un fisier
 {
-    if(!isInside(x, y))
-        return false;
+    switch (type)
+    {
+        case TileType :: Road:    return '.';
+        case TileType :: Wall:    return '#';
+        case TileType :: Base:    return 'B';
+        case TileType :: Station: return 'S';
+        case TileType :: Client:  return 'D';
+        default:                return '?';
+    }
+}
 
-    TileType tile = grid[x][y];
+void GridMap :: printMap(const std::string& filename) const //afisez harta in fisier text
+{
+    std :: ofstream out(filename); 
+    if (!out.is_open()) return;
 
-    if(tile == TileType :: Wall && !ignoreWalls)
-        return false;
-
-    return true;
+    for (int i = 0; i < rows; i++) //scriu harta linie cu linie
+    {
+        for (int j = 0; j < columns; j++)
+            out << tileTypeToChar(grid[i][j]);
+        out << '\n';
+    }
 }

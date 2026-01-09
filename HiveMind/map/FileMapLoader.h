@@ -9,6 +9,6 @@ class FileMapLoader : public IMapGenerator
         std :: string filename;
 
     public:
-        explicit FileMapLoader(const std :: string& filename);
-        std :: unique_ptr<GridMap> generate() override;
+        explicit FileMapLoader(const std :: string& filename); //constructorul explicit care primeste numele fisierului(am luat sugestia de pe geeksforgeeks)
+        std :: unique_ptr<GridMap> generate() override; //suprascriu metoda din IMapGenerator
 };

@@ -11,5 +11,5 @@ class ProceduralMapGenerator : public IMapGenerator
  
     public:
         ProceduralMapGenerator(int rows, int columns, int maxStations, int clientsCount);
-        std :: unique_ptr<GridMap> generate() override;
+        std :: unique_ptr<GridMap> generate() override; //suprascriu metoda din IMapGenerator
 };
